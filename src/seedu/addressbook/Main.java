@@ -3,12 +3,17 @@ package seedu.addressbook;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Stack;
 
 import seedu.addressbook.commands.Command;
 import seedu.addressbook.commands.CommandResult;
 import seedu.addressbook.commands.ExitCommand;
+import seedu.addressbook.commands.UndoDeleteCommand;
 import seedu.addressbook.data.AddressBook;
+import seedu.addressbook.data.PreviousDeletes;
+import seedu.addressbook.data.person.Person;
 import seedu.addressbook.data.person.ReadOnlyPerson;
+import seedu.addressbook.data.person.UniquePersonList;
 import seedu.addressbook.parser.Parser;
 import seedu.addressbook.storage.StorageFile;
 import seedu.addressbook.storage.StorageFile.InvalidStorageFilePathException;
@@ -28,17 +33,21 @@ public class Main {
     private TextUi ui;
     private StorageFile storage;
     private AddressBook addressBook;
-
+    public static PreviousDeletes deletes;
     /** The list of person shown to the user most recently.  */
     private List<? extends ReadOnlyPerson> lastShownList = Collections.emptyList();
 
 
     public static void main(String... launchArgs) {
-        new Main().run(launchArgs);
+        try {
+            new Main().run(launchArgs);
+        } catch (UniquePersonList.DuplicatePersonException e) {
+            e.printStackTrace();
+        }
     }
 
     /** Runs the program until termination.  */
-    public void run(String[] launchArgs) {
+    public void run(String[] launchArgs) throws UniquePersonList.DuplicatePersonException {
         start(launchArgs);
         runCommandLoopUntilExitCommand();
         exit();
@@ -79,12 +88,19 @@ public class Main {
     }
 
     /** Reads the user command and executes it, until the user issues the exit command.  */
-    private void runCommandLoopUntilExitCommand() {
+    private void runCommandLoopUntilExitCommand() throws UniquePersonList.DuplicatePersonException {
         Command command;
+        CommandResult result;
+        deletes = new PreviousDeletes();
         do {
             String userCommandText = ui.getUserCommand();
             command = new Parser().parseCommand(userCommandText);
-            CommandResult result = executeCommand(command);
+            if(userCommandText.contains("delete")||userCommandText.contains("undoDelete")) {
+                result = executeCommand(command,deletes);
+            }
+            else {
+                result = executeCommand(command);
+            }
             recordResult(result);
             ui.showResultToUser(result);
 
@@ -98,7 +114,23 @@ public class Main {
             lastShownList = personList.get();
         }
     }
-
+    /**
+     * Executes the command and returns the result.
+     *
+     * @param command user command
+     * @return result of the command
+     */
+    private CommandResult executeCommand(Command command,PreviousDeletes undo)  {
+        try {
+            command.setData(addressBook, lastShownList);
+            CommandResult result = command.execute(undo);
+            storage.save(addressBook);
+            return result;
+        } catch (Exception e) {
+            ui.showToUser(e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
     /**
      * Executes the command and returns the result.
      *

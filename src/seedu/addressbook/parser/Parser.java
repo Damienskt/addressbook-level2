@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 
 import seedu.addressbook.commands.*;
 import seedu.addressbook.data.exception.IllegalValueException;
+import seedu.addressbook.data.person.UniquePersonList;
 
 /**
  * Parses user input.
@@ -31,7 +32,7 @@ public class Parser {
                     + " (?<isAddressPrivate>p?)a/(?<address>[^/]+)"
                     + "(?<tagArguments>(?: t/[^/]+)*)"); // variable number of tags
 
-
+    public UndoDeleteCommand undo = new UndoDeleteCommand();
     /**
      * Signals that the user input could not be parsed.
      */
@@ -54,7 +55,7 @@ public class Parser {
      * @param userInput full user input string
      * @return the command based on the user input
      */
-    public Command parseCommand(String userInput) {
+    public Command parseCommand(String userInput) throws UniquePersonList.DuplicatePersonException {
         final Matcher matcher = BASIC_COMMAND_FORMAT.matcher(userInput.trim());
         if (!matcher.matches()) {
             return new IncorrectCommand(String.format(MESSAGE_INVALID_COMMAND_FORMAT, HelpCommand.MESSAGE_USAGE));
@@ -64,8 +65,8 @@ public class Parser {
         final String arguments = matcher.group("arguments");
 
         switch (commandWord) {
-       //     case UndoDeleteCommand.COMMAND_WORD:
-         //       return ;
+            case UndoDeleteCommand.COMMAND_WORD:
+                return prepareUndoDelete() ;
         case AddCommand.COMMAND_WORD:
             return prepareAdd(arguments);
         case DeleteCommand.COMMAND_WORD:
@@ -158,7 +159,7 @@ public class Parser {
     private Command prepareDelete(String args) {
         try {
             final int targetIndex = parseArgsAsDisplayedIndex(args);
-            return new DeleteCommand(targetIndex);
+            return new DeleteCommand(targetIndex, undo);
         } catch (ParseException pe) {
             return new IncorrectCommand(String.format(MESSAGE_INVALID_COMMAND_FORMAT, DeleteCommand.MESSAGE_USAGE));
         } catch (NumberFormatException nfe) {
@@ -166,6 +167,14 @@ public class Parser {
         }
     }
 
+    /**
+     * Parses arguments in the context of the delete person command.
+     *
+     * @return the prepared command
+     */
+    private Command prepareUndoDelete() {
+        return new UndoDeleteCommand();
+    }
     /**
      * Parses arguments in the context of the view command.
      *
