@@ -4,7 +4,7 @@ import seedu.addressbook.data.PreviousDeletes;
 import seedu.addressbook.data.person.*;
 
 public class UndoDeleteCommand extends Command {
-    public static final String COMMAND_WORD = "undodelete";
+    public static final String COMMAND_WORD = "undoDelete";
     public static final String MESSAGE_UNDO_FAILED = "Failed to undo delete";
 
     public UndoDeleteCommand() {

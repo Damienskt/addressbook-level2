@@ -141,7 +141,7 @@
   list
 
 ##########################################################
-# test undoDelete command
+# test undodelete command
 ##########################################################
 
   # should undo the delete of latest deleted person

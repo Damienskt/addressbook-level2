@@ -81,7 +81,7 @@ Examples:
   `delete 1`<br>
   Deletes the 1st person in the results of the `find` command.
   
-### Undo Delete of a person : `undodelete`
+### Undo Delete of a person : `undoDelete`
 Add the latest deleted person into the address book. Irreversible.<br>
 Format: `undoDelete`
 
