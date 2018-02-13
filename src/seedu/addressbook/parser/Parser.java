@@ -32,7 +32,7 @@ public class Parser {
                     + " (?<isAddressPrivate>p?)a/(?<address>[^/]+)"
                     + "(?<tagArguments>(?: t/[^/]+)*)"); // variable number of tags
 
-    public UndoDeleteCommand undo = new UndoDeleteCommand();
+    public UndoDeleteCommand undo;
     /**
      * Signals that the user input could not be parsed.
      */
