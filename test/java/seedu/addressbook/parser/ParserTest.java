@@ -24,12 +24,7 @@ import seedu.addressbook.commands.ListCommand;
 import seedu.addressbook.commands.ViewAllCommand;
 import seedu.addressbook.commands.ViewCommand;
 import seedu.addressbook.data.exception.IllegalValueException;
-import seedu.addressbook.data.person.Address;
-import seedu.addressbook.data.person.Email;
-import seedu.addressbook.data.person.Name;
-import seedu.addressbook.data.person.Person;
-import seedu.addressbook.data.person.Phone;
-import seedu.addressbook.data.person.ReadOnlyPerson;
+import seedu.addressbook.data.person.*;
 import seedu.addressbook.data.tag.Tag;
 import seedu.addressbook.data.tag.UniqueTagList;
 
@@ -48,14 +43,14 @@ public class ParserTest {
      */
 
     @Test
-    public void parse_emptyInput_returnsIncorrect() {
+    public void parse_emptyInput_returnsIncorrect() throws UniquePersonList.DuplicatePersonException {
         final String[] emptyInputs = { "", "  ", "\n  \n" };
         final String resultMessage = String.format(MESSAGE_INVALID_COMMAND_FORMAT, HelpCommand.MESSAGE_USAGE);
         parseAndAssertIncorrectWithMessage(resultMessage, emptyInputs);
     }
 
     @Test
-    public void parse_unknownCommandWord_returnsHelp() {
+    public void parse_unknownCommandWord_returnsHelp() throws UniquePersonList.DuplicatePersonException {
         final String input = "unknowncommandword arguments arguments";
         parseAndAssertCommandType(input, HelpCommand.class);
     }
@@ -65,25 +60,25 @@ public class ParserTest {
      */
 
     @Test
-    public void parse_helpCommand_parsedCorrectly() {
+    public void parse_helpCommand_parsedCorrectly() throws UniquePersonList.DuplicatePersonException {
         final String input = "help";
         parseAndAssertCommandType(input, HelpCommand.class);
     }
 
     @Test
-    public void parse_clearCommand_parsedCorrectly() {
+    public void parse_clearCommand_parsedCorrectly() throws UniquePersonList.DuplicatePersonException {
         final String input = "clear";
         parseAndAssertCommandType(input, ClearCommand.class);
     }
 
     @Test
-    public void parse_listCommand_parsedCorrectly() {
+    public void parse_listCommand_parsedCorrectly() throws UniquePersonList.DuplicatePersonException {
         final String input = "list";
         parseAndAssertCommandType(input, ListCommand.class);
     }
 
     @Test
-    public void parse_exitCommand_parsedCorrectly() {
+    public void parse_exitCommand_parsedCorrectly() throws UniquePersonList.DuplicatePersonException {
         final String input = "exit";
         parseAndAssertCommandType(input, ExitCommand.class);
     }
@@ -93,21 +88,21 @@ public class ParserTest {
      */
 
     @Test
-    public void parse_deleteCommandNoArgs_errorMessage() {
+    public void parse_deleteCommandNoArgs_errorMessage() throws UniquePersonList.DuplicatePersonException {
         final String[] inputs = { "delete", "delete " };
         final String resultMessage = String.format(MESSAGE_INVALID_COMMAND_FORMAT, DeleteCommand.MESSAGE_USAGE);
         parseAndAssertIncorrectWithMessage(resultMessage, inputs);
     }
 
     @Test
-    public void parse_deleteCommandArgsIsNotSingleNumber_errorMessage() {
+    public void parse_deleteCommandArgsIsNotSingleNumber_errorMessage() throws UniquePersonList.DuplicatePersonException {
         final String[] inputs = { "delete notAnumber ", "delete 8*wh12", "delete 1 2 3 4 5" };
         final String resultMessage = MESSAGE_INVALID_PERSON_DISPLAYED_INDEX;
         parseAndAssertIncorrectWithMessage(resultMessage, inputs);
     }
 
     @Test
-    public void parse_deleteCommandNumericArg_indexParsedCorrectly() {
+    public void parse_deleteCommandNumericArg_indexParsedCorrectly() throws UniquePersonList.DuplicatePersonException {
         final int testIndex = 1;
         final String input = "delete " + testIndex;
         final DeleteCommand result = parseAndAssertCommandType(input, DeleteCommand.class);
@@ -115,21 +110,21 @@ public class ParserTest {
     }
 
     @Test
-    public void viewCommandNoArgs_errorMessage() {
+    public void viewCommandNoArgs_errorMessage() throws UniquePersonList.DuplicatePersonException {
         final String[] inputs = { "view", "view " };
         final String resultMessage = String.format(MESSAGE_INVALID_COMMAND_FORMAT, ViewCommand.MESSAGE_USAGE);
         parseAndAssertIncorrectWithMessage(resultMessage, inputs);
     }
 
     @Test
-    public void parse_viewCommandArgsIsNotSingleNumber_errorMessage() {
+    public void parse_viewCommandArgsIsNotSingleNumber_errorMessage() throws UniquePersonList.DuplicatePersonException {
         final String[] inputs = { "view notAnumber ", "view 8*wh12", "view 1 2 3 4 5" };
         final String resultMessage = MESSAGE_INVALID_PERSON_DISPLAYED_INDEX;
         parseAndAssertIncorrectWithMessage(resultMessage, inputs);
     }
 
     @Test
-    public void parse_viewCommandNumericArg_indexParsedCorrectly() {
+    public void parse_viewCommandNumericArg_indexParsedCorrectly() throws UniquePersonList.DuplicatePersonException {
         final int testIndex = 2;
         final String input = "view " + testIndex;
         final ViewCommand result = parseAndAssertCommandType(input, ViewCommand.class);
@@ -137,7 +132,7 @@ public class ParserTest {
     }
 
     @Test
-    public void parse_viewAllCommandNoArgs_errorMessage() {
+    public void parse_viewAllCommandNoArgs_errorMessage() throws UniquePersonList.DuplicatePersonException {
         final String[] inputs = { "viewall", "viewall " };
         final String resultMessage =
                 String.format(MESSAGE_INVALID_COMMAND_FORMAT, ViewAllCommand.MESSAGE_USAGE);
@@ -145,14 +140,14 @@ public class ParserTest {
     }
 
     @Test
-    public void parse_viewAllCommandArgsIsNotSingleNumber_errorMessage() {
+    public void parse_viewAllCommandArgsIsNotSingleNumber_errorMessage() throws UniquePersonList.DuplicatePersonException {
         final String[] inputs = { "viewall notAnumber ", "viewall 8*wh12", "viewall 1 2 3 4 5" };
         final String resultMessage = MESSAGE_INVALID_PERSON_DISPLAYED_INDEX;
         parseAndAssertIncorrectWithMessage(resultMessage, inputs);
     }
 
     @Test
-    public void parse_viewAllCommandNumericArg_indexParsedCorrectly() {
+    public void parse_viewAllCommandNumericArg_indexParsedCorrectly() throws UniquePersonList.DuplicatePersonException {
         final int testIndex = 3;
         final String input = "viewall " + testIndex;
         final ViewAllCommand result = parseAndAssertCommandType(input, ViewAllCommand.class);
@@ -164,7 +159,7 @@ public class ParserTest {
      */
 
     @Test
-    public void parse_findCommandInvalidArgs_errorMessage() {
+    public void parse_findCommandInvalidArgs_errorMessage() throws UniquePersonList.DuplicatePersonException {
         // no keywords
         final String[] inputs = {
             "find",
@@ -176,7 +171,7 @@ public class ParserTest {
     }
 
     @Test
-    public void parse_findCommandValidArgs_parsedCorrectly() {
+    public void parse_findCommandValidArgs_parsedCorrectly() throws UniquePersonList.DuplicatePersonException {
         final String[] keywords = { "key1", "key2", "key3" };
         final Set<String> keySet = new HashSet<>(Arrays.asList(keywords));
 
@@ -187,7 +182,7 @@ public class ParserTest {
     }
 
     @Test
-    public void parse_findCommandDuplicateKeys_parsedCorrectly() {
+    public void parse_findCommandDuplicateKeys_parsedCorrectly() throws UniquePersonList.DuplicatePersonException {
         final String[] keywords = { "key1", "key2", "key3" };
         final Set<String> keySet = new HashSet<>(Arrays.asList(keywords));
 
@@ -203,7 +198,7 @@ public class ParserTest {
      */
 
     @Test
-    public void parse_addCommandInvalidArgs_errorMessage() {
+    public void parse_addCommandInvalidArgs_errorMessage() throws UniquePersonList.DuplicatePersonException {
         final String[] inputs = {
             "add",
             "add ",
@@ -220,7 +215,7 @@ public class ParserTest {
     }
 
     @Test
-    public void parse_addCommandInvalidPersonDataInArgs_errorMessge() {
+    public void parse_addCommandInvalidPersonDataInArgs_errorMessge() throws UniquePersonList.DuplicatePersonException {
         final String invalidName = "[]\\[;]";
         final String validName = Name.EXAMPLE;
         final String invalidPhoneArg = "p/not__numbers";
@@ -249,7 +244,7 @@ public class ParserTest {
     }
 
     @Test
-    public void parse_addCommandValidPersonData_parsedCorrectly() {
+    public void parse_addCommandValidPersonData_parsedCorrectly() throws UniquePersonList.DuplicatePersonException {
         final Person testPerson = generateTestPerson();
         final String input = convertPersonToAddCommandString(testPerson);
         final AddCommand result = parseAndAssertCommandType(input, AddCommand.class);
@@ -302,7 +297,7 @@ public class ParserTest {
     /**
      * Asserts that parsing the given inputs will return IncorrectCommand with the given feedback message.
      */
-    private void parseAndAssertIncorrectWithMessage(String feedbackMessage, String... inputs) {
+    private void parseAndAssertIncorrectWithMessage(String feedbackMessage, String... inputs) throws UniquePersonList.DuplicatePersonException {
         for (String input : inputs) {
             final IncorrectCommand result = parseAndAssertCommandType(input, IncorrectCommand.class);
             assertEquals(result.feedbackToUser, feedbackMessage);
@@ -316,7 +311,7 @@ public class ParserTest {
      * @param expectedCommandClass expected class of returned command
      * @return the parsed command object
      */
-    private <T extends Command> T parseAndAssertCommandType(String input, Class<T> expectedCommandClass) {
+    private <T extends Command> T parseAndAssertCommandType(String input, Class<T> expectedCommandClass) throws UniquePersonList.DuplicatePersonException {
         final Command result = parser.parseCommand(input);
         assertTrue(result.getClass().isAssignableFrom(expectedCommandClass));
         return (T) result;
