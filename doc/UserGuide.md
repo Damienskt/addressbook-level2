@@ -80,6 +80,17 @@ Examples:
 * `find Betsy`<br> 
   `delete 1`<br>
   Deletes the 1st person in the results of the `find` command.
+  
+### Undo Delete of a person : `undoDelete`
+Add the latest deleted person into the address book. Irreversible.<br>
+Format: `undoDelete`
+
+> Add the person to the end of the address book. 
+ 
+Examples: 
+* `list`<br>
+  `undoDelete`<br>
+  Add the latest deleted person into address book.
 
 ### View non-private details of a person : `view`
 Displays the non-private details of the specified person.<br>
