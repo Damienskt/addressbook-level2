@@ -11,15 +11,30 @@ public class PreviousDeletes {
     public PreviousDeletes() {
         previousDelete = new Stack<>();
     }
-    public void AddDeleted (ReadOnlyPerson target) {
+
+    /**
+     * Adds deleted person into stack
+     * @param target
+     */
+    public void AddDeletedPerson(ReadOnlyPerson target) {
+        Person deletedPerson = getPerson(target);
+        previousDelete.push(deletedPerson);
+    }
+
+    /**
+     * Create Person class
+     * @param target
+     * @return Person
+     */
+    private Person getPerson(ReadOnlyPerson target) {
         Name nameOfRemoved = target.getName();
         Phone phoneOfRemoved = target.getPhone();
         Address addOfRemoved = target.getAddress();
         Email emailOfRemoved = target.getEmail();
         UniqueTagList tagOfRemoved = target.getTags();
-        Person deletedPerson = new Person(nameOfRemoved,phoneOfRemoved,emailOfRemoved,addOfRemoved,tagOfRemoved);
-        previousDelete.push(deletedPerson);
+        return new Person(nameOfRemoved,phoneOfRemoved,emailOfRemoved,addOfRemoved,tagOfRemoved);
     }
+
     public int getSize() {
         return previousDelete.size();
     }

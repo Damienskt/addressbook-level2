@@ -95,16 +95,29 @@ public class Main {
         do {
             String userCommandText = ui.getUserCommand();
             command = new Parser().parseCommand(userCommandText);
-            if(userCommandText.contains("delete")||userCommandText.contains("undoDelete")) {
-                result = executeCommand(command,deletes);
-            }
-            else {
-                result = executeCommand(command);
-            }
+            result = getCommandResult(command, userCommandText);
             recordResult(result);
             ui.showResultToUser(result);
 
         } while (!ExitCommand.isExit(command));
+    }
+
+    /**
+     *
+     * @param command
+     * @param userCommandText
+     * @return result of Command
+     */
+
+    private CommandResult getCommandResult(Command command, String userCommandText) {
+        CommandResult result;
+        if(userCommandText.contains("delete")||userCommandText.contains("undoDelete")) {
+            result = executeCommand(command,deletes);
+        }
+        else {
+            result = executeCommand(command);
+        }
+        return result;
     }
 
     /** Updates the {@link #lastShownList} if the result contains a list of Persons. */

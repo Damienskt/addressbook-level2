@@ -10,15 +10,29 @@ public class UndoDeleteCommand extends Command {
     public UndoDeleteCommand() {
     }
 
-    public CommandResult execute(PreviousDeletes undo) {
-        if(undo.getSize()>0) {
-            try {
-                addressBook.addPerson(undo.pop());
-            } catch (UniquePersonList.DuplicatePersonException e) {
-                e.printStackTrace();
-            }
-            return new CommandResult("Undo Complete");
+    /**
+     *
+     * @param listOfDeleted
+     * @return return result of command
+     */
+    public CommandResult execute(PreviousDeletes listOfDeleted) {
+        if(listOfDeleted.getSize()>0) {
+            return getCommandResult(listOfDeleted);
         }
         else return new CommandResult(MESSAGE_UNDO_FAILED);
+    }
+
+    /**
+     * Store previously deleted Person into address book
+     * @param listOfDeleted
+     * @return return result of command
+     */
+    private CommandResult getCommandResult(PreviousDeletes listOfDeleted) {
+        try {
+            addressBook.addPerson(listOfDeleted.pop());
+        } catch (UniquePersonList.DuplicatePersonException e) {
+            e.printStackTrace();
+        }
+        return new CommandResult("Undo Complete");
     }
 }

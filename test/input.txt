@@ -141,6 +141,30 @@
   list
 
 ##########################################################
+# test undoDelete command
+##########################################################
+
+  # should undo the delete of latest deleted person
+  undoDelete
+  list
+
+  # Should undo latest delete
+  undoDelete
+  list
+
+  # Should undo latest delete
+  undoDelete
+  list
+
+  # Should undo latest delete
+  undoDelete
+  list
+
+  # Should undo latest delete
+  undoDelete
+  list
+
+##########################################################
 # test clear command
 ##########################################################
 
