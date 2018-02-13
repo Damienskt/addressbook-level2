@@ -27,7 +27,7 @@ public class DeleteCommand extends Command {
     public DeleteCommand(int targetVisibleIndex) { super(targetVisibleIndex);
     }
 
-/*
+
     @Override
     public CommandResult execute() {
         try {
@@ -40,7 +40,7 @@ public class DeleteCommand extends Command {
         } catch (PersonNotFoundException pnfe) {
             return new CommandResult(Messages.MESSAGE_PERSON_NOT_IN_ADDRESSBOOK);
         }
-    }*/
+    }
 
     public CommandResult execute(PreviousDeletes listOfDeletes) {
         try {
