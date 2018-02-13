@@ -156,13 +156,10 @@
   undoDelete
   list
 
-  # Should undo latest delete
+  # Should fail to undo as no more people in the deleted list
   undoDelete
   list
 
-  # Should undo latest delete
-  undoDelete
-  list
 
 ##########################################################
 # test clear command
