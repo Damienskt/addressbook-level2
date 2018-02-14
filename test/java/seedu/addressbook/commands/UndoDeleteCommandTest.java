@@ -87,6 +87,7 @@ public class UndoDeleteCommandTest {
      * The addressBook passed in will not be modified (no side effects).
      *
      * @throws PersonNotFoundException if the selected person is not in the address book
+     * @throws UniquePersonList.DuplicatePersonException if the selected person to be added is already in address book
      */
     private void assertUndoDeletionSuccessful(int targetVisibleIndex, AddressBook addressBook,
                                               List<ReadOnlyPerson> displayList) throws PersonNotFoundException, UniquePersonList.DuplicatePersonException {
@@ -111,6 +112,37 @@ public class UndoDeleteCommandTest {
 
     }
 
+    /**
+     * Asserts that no deleted person available to be added
+     *
+     * The addressBook passed in will not be modified (no side effects).
+     *
+     * @throws PersonNotFoundException if the selected person is not in the address book
+     * @throws UniquePersonList.DuplicatePersonException if the selected person to be added is already in address book
+     */
+    private void assertUndoDeletionFailed(int targetVisibleIndex, AddressBook addressBook,
+                                              List<ReadOnlyPerson> displayList) throws PersonNotFoundException, UniquePersonList.DuplicatePersonException {
+
+        ReadOnlyPerson targetPerson = displayList.get(targetVisibleIndex - TextUi.DISPLAYED_INDEX_OFFSET);
+        Person target = new Person(targetPerson.getName(),targetPerson.getPhone(),targetPerson.getEmail(),targetPerson.getAddress(), targetPerson.getTags());
+
+        AddressBook expectedAddressBook = TestUtil.clone(addressBook);
+        expectedAddressBook.removePerson(targetPerson);
+        expectedAddressBook.addPerson(target);
+        String expectedUndoDeleteMessage = String.format(UndoDeleteCommand.MESSAGE_UNDO_FAILED);
+
+        AddressBook actualAddressBook = TestUtil.clone(addressBook);
+
+
+        DeleteCommand command = createDeleteCommand(targetVisibleIndex, actualAddressBook, displayList);
+        command.execute(deletes);
+
+        UndoDeleteCommand undoDelete = createUndoDeleteCommand(actualAddressBook,displayList);
+        assertUndoDeleteCommandBehaviour(undoDelete,expectedUndoDeleteMessage,expectedAddressBook,actualAddressBook);
+        assertUndoDeleteCommandBehaviour(undoDelete,expectedUndoDeleteMessage,expectedAddressBook,actualAddressBook);
+
+
+    }
     /**
      * Executes the command, and checks that the execution was what we had expected.
      */
