@@ -6,6 +6,7 @@ import seedu.addressbook.data.person.*;
 public class UndoDeleteCommand extends Command {
     public static final String COMMAND_WORD = "undoDelete";
     public static final String MESSAGE_UNDO_FAILED = "Failed to undo delete";
+    public static final String MESSAGE_UNDO_SUCCESS = "Undo Complete";
 
     public UndoDeleteCommand() {
     }
@@ -33,6 +34,6 @@ public class UndoDeleteCommand extends Command {
         } catch (UniquePersonList.DuplicatePersonException e) {
             e.printStackTrace();
         }
-        return new CommandResult("Undo Complete");
+        return new CommandResult(MESSAGE_UNDO_SUCCESS);
     }
 }
