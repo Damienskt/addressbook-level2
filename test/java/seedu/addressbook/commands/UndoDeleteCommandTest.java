@@ -49,7 +49,7 @@ public class UndoDeleteCommandTest {
     }
 
     @Test
-    public void execute_successful_undoDelete() throws PersonNotFoundException {
+    public void execute_successful_undoDelete() throws PersonNotFoundException, UniquePersonList.DuplicatePersonException {
         assertUndoDeletionSuccessful(1, addressBook, listWithSurnameDoe);
     }
 
