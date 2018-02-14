@@ -89,13 +89,18 @@ public class UndoDeleteCommandTest {
      * @throws PersonNotFoundException if the selected person is not in the address book
      */
     private void assertUndoDeletionSuccessful(int targetVisibleIndex, AddressBook addressBook,
-                                              List<ReadOnlyPerson> displayList) {
+                                              List<ReadOnlyPerson> displayList) throws PersonNotFoundException, UniquePersonList.DuplicatePersonException {
+
+        ReadOnlyPerson targetPerson = displayList.get(targetVisibleIndex - TextUi.DISPLAYED_INDEX_OFFSET);
+        Person target = new Person(targetPerson.getName(),targetPerson.getPhone(),targetPerson.getEmail(),targetPerson.getAddress(), targetPerson.getTags());
 
         AddressBook expectedAddressBook = TestUtil.clone(addressBook);
-
+        expectedAddressBook.removePerson(targetPerson);
+        expectedAddressBook.addPerson(target);
         String expectedUndoDeleteMessage = String.format(UndoDeleteCommand.MESSAGE_UNDO_SUCCESS);
 
         AddressBook actualAddressBook = TestUtil.clone(addressBook);
+
 
         DeleteCommand command = createDeleteCommand(targetVisibleIndex, actualAddressBook, displayList);
         command.execute(deletes);
@@ -115,6 +120,6 @@ public class UndoDeleteCommandTest {
         CommandResult result = undoDeleteCommand.execute(deletes);
 
         assertEquals(expectedMessage, result.feedbackToUser);
-     //   assertEquals(expectedAddressBook.getAllPersons(), actualAddressBook.getAllPersons());
+        assertEquals(expectedAddressBook.getAllPersons(), actualAddressBook.getAllPersons());
     }
 }
