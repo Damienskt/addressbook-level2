@@ -49,47 +49,8 @@ public class UndoDeleteCommandTest {
     }
 
     @Test
-    public void execute_emptyAddressBook_returnsPersonNotFoundMessage() {
-        assertDeletionFailsDueToNoSuchPerson(1, emptyAddressBook, listWithEveryone);
-    }
-
-    @Test
-    public void execute_noPersonDisplayed_returnsInvalidIndexMessage() {
-        assertDeletionFailsDueToInvalidIndex(1, addressBook, emptyDisplayList);
-    }
-
-    @Test
-    public void execute_targetPersonNotInAddressBook_returnsPersonNotFoundMessage()
-            throws IllegalValueException {
-        Person notInAddressBookPerson = new Person(new Name("Not In Book"), new Phone("63331444", false),
-                new Email("notin@book.com", false), new Address("156D Grant Road", false), new UniqueTagList());
-        List<ReadOnlyPerson> listWithPersonNotInAddressBook = TestUtil.createList(notInAddressBookPerson);
-
-        assertDeletionFailsDueToNoSuchPerson(1, addressBook, listWithPersonNotInAddressBook);
-    }
-
-    @Test
-    public void execute_invalidIndex_returnsInvalidIndexMessage() {
-        assertDeletionFailsDueToInvalidIndex(0, addressBook, listWithEveryone);
-        assertDeletionFailsDueToInvalidIndex(-1, addressBook, listWithEveryone);
-        assertDeletionFailsDueToInvalidIndex(listWithEveryone.size() + 1, addressBook, listWithEveryone);
-    }
-
-    @Test
-    public void execute_validIndex_personIsDeleted() throws PersonNotFoundException {
-        assertDeletionSuccessful(1, addressBook, listWithSurnameDoe);
-        assertDeletionSuccessful(listWithSurnameDoe.size(), addressBook, listWithSurnameDoe);
-
-        int middleIndex = (listWithSurnameDoe.size() / 2) + 1;
-        assertDeletionSuccessful(middleIndex, addressBook, listWithSurnameDoe);
-    }
-
-    @Test
     public void execute_successful_undoDelete() throws PersonNotFoundException {
-        assertDeletionSuccessful(1, addressBook, listWithSurnameDoe);
-
-
-
+        assertUndoDeletionSuccessful(1, addressBook, listWithSurnameDoe);
     }
 
     /**
@@ -121,66 +82,7 @@ public class UndoDeleteCommandTest {
     }
 
     /**
-     * Executes the command, and checks that the execution was what we had expected.
-     */
-    private void assertCommandBehaviour(DeleteCommand deleteCommand, String expectedMessage,
-                                        AddressBook expectedAddressBook, AddressBook actualAddressBook) {
-
-        CommandResult result = deleteCommand.execute(deletes);
-
-        assertEquals(expectedMessage, result.feedbackToUser);
-        assertEquals(expectedAddressBook.getAllPersons(), actualAddressBook.getAllPersons());
-    }
-
-    /**
-     * Asserts that the index is not valid for the given display list.
-     */
-    private void assertDeletionFailsDueToInvalidIndex(int invalidVisibleIndex, AddressBook addressBook,
-                                                                        List<ReadOnlyPerson> displayList) {
-
-        String expectedMessage = Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX;
-
-        DeleteCommand command = createDeleteCommand(invalidVisibleIndex, addressBook, displayList);
-        assertCommandBehaviour(command, expectedMessage, addressBook, addressBook);
-    }
-
-    /**
-     * Asserts that the person at the specified index cannot be deleted, because that person
-     * is not in the address book.
-     */
-    private void assertDeletionFailsDueToNoSuchPerson(int visibleIndex, AddressBook addressBook,
-                                                                        List<ReadOnlyPerson> displayList) {
-
-        String expectedMessage = Messages.MESSAGE_PERSON_NOT_IN_ADDRESSBOOK;
-
-        DeleteCommand command = createDeleteCommand(visibleIndex, addressBook, displayList);
-        assertCommandBehaviour(command, expectedMessage, addressBook, addressBook);
-    }
-
-    /**
-     * Asserts that the person at the specified index can be successfully deleted.
-     *
-     * The addressBook passed in will not be modified (no side effects).
-     *
-     * @throws PersonNotFoundException if the selected person is not in the address book
-     */
-    private void assertDeletionSuccessful(int targetVisibleIndex, AddressBook addressBook,
-                                          List<ReadOnlyPerson> displayList) throws PersonNotFoundException {
-
-        ReadOnlyPerson targetPerson = displayList.get(targetVisibleIndex - TextUi.DISPLAYED_INDEX_OFFSET);
-
-        AddressBook expectedAddressBook = TestUtil.clone(addressBook);
-        expectedAddressBook.removePerson(targetPerson);
-        String expectedMessage = String.format(DeleteCommand.MESSAGE_DELETE_PERSON_SUCCESS, targetPerson);
-
-        AddressBook actualAddressBook = TestUtil.clone(addressBook);
-
-        DeleteCommand command = createDeleteCommand(targetVisibleIndex, actualAddressBook, displayList);
-        assertCommandBehaviour(command, expectedMessage, expectedAddressBook, actualAddressBook);
-    }
-
-    /**
-     * Asserts that the person at the specified index can be successfully deleted.
+     * Asserts that the previously deleted person is added back into list
      *
      * The addressBook passed in will not be modified (no side effects).
      *
@@ -188,8 +90,6 @@ public class UndoDeleteCommandTest {
      */
     private void assertUndoDeletionSuccessful(int targetVisibleIndex, AddressBook addressBook,
                                               List<ReadOnlyPerson> displayList) throws PersonNotFoundException {
-
-        ReadOnlyPerson targetPerson = displayList.get(targetVisibleIndex - TextUi.DISPLAYED_INDEX_OFFSET);
 
         AddressBook expectedAddressBook = TestUtil.clone(addressBook);
 
